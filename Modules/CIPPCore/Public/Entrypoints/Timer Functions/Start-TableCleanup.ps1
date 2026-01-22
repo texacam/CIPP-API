@@ -57,15 +57,6 @@ function Start-TableCleanup {
             }
         }
         @{
-            FunctionName   = 'TableCleanupTask'
-            Type           = 'CleanupRule'
-            TableName      = 'ScheduledTasks'
-            DataTableProps = @{
-                Filter   = "PartitionKey eq 'ScheduledTask' and Command eq 'Sync-CippExtensionData'"
-                Property = @('PartitionKey', 'RowKey', 'ETag')
-            }
-        }
-        @{
             FunctionName = 'TableCleanupTask'
             Type         = 'DeleteTable'
             Tables       = @('knownlocationdb', 'CacheExtensionSync', 'ExtensionSync')

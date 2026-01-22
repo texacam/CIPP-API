@@ -27,9 +27,6 @@ function Get-CIPPMFAStateReport {
             $AllMFAItems = Get-CIPPDbItem -TenantFilter 'allTenants' -Type 'MFAState'
             $Tenants = @($AllMFAItems | Where-Object { $_.RowKey -ne 'MFAState-Count' } | Select-Object -ExpandProperty PartitionKey -Unique)
 
-            $TenantList = Get-Tenants -IncludeErrors
-            $Tenants = $Tenants | Where-Object { $TenantList.defaultDomainName -contains $_ }
-
             $AllResults = [System.Collections.Generic.List[PSCustomObject]]::new()
             foreach ($Tenant in $Tenants) {
                 try {
@@ -47,7 +44,7 @@ function Get-CIPPMFAStateReport {
         }
 
         # Get MFA state from reporting DB
-        $MFAItems = Get-CIPPDbItem -TenantFilter $TenantFilter -Type 'MFAState' | Where-Object { $_.RowKey -ne 'MFAState-Count' }
+        $MFAItems = Get-CIPPDbItem -TenantFilter $TenantFilter -Type 'MFAState'
         if (-not $MFAItems) {
             throw 'No MFA state data found in reporting database. Sync the report data first.'
         }
@@ -72,7 +69,7 @@ function Get-CIPPMFAStateReport {
             $AllMFAState.Add($MFAUser)
         }
 
-        return $AllMFAState | Sort-Object -Property DisplayName
+        return $AllMFAState
 
     } catch {
         Write-LogMessage -API 'MFAStateReport' -tenant $TenantFilter -message "Failed to generate MFA state report: $($_.Exception.Message)" -sev Error

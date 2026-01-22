@@ -21,8 +21,7 @@ function Invoke-ListLogs {
         }
     } elseif ($Request.Query.logentryid) {
         # Return single log entry by RowKey
-        $DateFilter = $Request.Query.DateFilter ?? (Get-Date -UFormat '%Y%m%d')
-        $Filter = "RowKey eq '{0}'" -f $Request.Query.logentryid, $DateFilter
+        $Filter = "RowKey eq '{0}'" -f $Request.Query.logentryid
         $AllowedTenants = Test-CIPPAccess -Request $Request -TenantList
         Write-Host "Getting single log entry for RowKey: $($Request.Query.logentryid)"
 
@@ -60,23 +59,22 @@ function Invoke-ListLogs {
                     $Row.LogData | ConvertFrom-Json
                 } else { $Row.LogData }
                 [PSCustomObject]@{
-                    DateTime   = $Row.Timestamp
-                    Tenant     = $Row.Tenant
-                    API        = $Row.API
-                    Message    = $Row.Message
-                    User       = $Row.Username
-                    Severity   = $Row.Severity
-                    LogData    = $LogData
-                    TenantID   = if ($Row.TenantID -ne $null) {
+                    DateTime = $Row.Timestamp
+                    Tenant   = $Row.Tenant
+                    API      = $Row.API
+                    Message  = $Row.Message
+                    User     = $Row.Username
+                    Severity = $Row.Severity
+                    LogData  = $LogData
+                    TenantID = if ($Row.TenantID -ne $null) {
                         $Row.TenantID
                     } else {
                         'None'
                     }
-                    AppId      = $Row.AppId
-                    IP         = $Row.IP
-                    RowKey     = $Row.RowKey
-                    Standard   = $StandardInfo
-                    DateFilter = $Row.PartitionKey
+                    AppId    = $Row.AppId
+                    IP       = $Row.IP
+                    RowKey   = $Row.RowKey
+                    Standard = $StandardInfo
                 }
             }
         }
@@ -166,7 +164,6 @@ function Invoke-ListLogs {
                     IP           = $Row.IP
                     RowKey       = $Row.RowKey
                     StandardInfo = $StandardInfo
-                    DateFilter   = $Row.PartitionKey
                 }
             }
         }
